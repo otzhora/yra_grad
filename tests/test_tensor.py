@@ -6,9 +6,9 @@ import torch
 from yra_grad.tensor import Tensor
 
 
-x_init = np.random.randn(1,3).astype(np.float32)
-W_init = np.random.randn(3,3).astype(np.float32)
-m_init = np.random.randn(1,3).astype(np.float32)
+x_init = np.random.randn(1, 3).astype(np.float32)
+W_init = np.random.randn(3, 3).astype(np.float32)
+m_init = np.random.randn(1, 3).astype(np.float32)
 
 
 class TestTensor(unittest.TestCase):
