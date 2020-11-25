@@ -64,9 +64,6 @@ class TestTensor(unittest.TestCase):
         for x, y in zip(test_Tensor(), test_pytorch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
-    def test_to_fail(self):
-        assert False
-
 
 if __name__ == "__main__":
     unittest.main()
