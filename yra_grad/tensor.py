@@ -16,7 +16,14 @@ class Tensor:
         self.is_leaf = is_leaf
         self.prev = []
         self.backward_fn = backward_fn
-        self.data = data
+
+        if isinstance(data, np.ndarray):
+            self.data = data
+        elif isinstance(data, list):
+            self.data = np.ndarray(data)
+        else:
+            raise ValueError("data should be list or np.ndarray")
+
         self.grad = np.zeros(self.data.shape)
 
     def __repr__(self):
