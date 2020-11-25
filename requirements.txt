@@ -1,0 +1,6 @@
+# actual requirements
+numpy==1.19.4
+# dev
+jupyter==1.0.0
+# tests
+torch==1.7.0
