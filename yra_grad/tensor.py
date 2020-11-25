@@ -54,6 +54,9 @@ class Tensor:
 
     # ops
 
+    def assign(self, other):
+        self.data = other.data
+
     def div(self, other):
         check(other)
 
@@ -135,6 +138,14 @@ class Tensor:
         res.prev.extend([self, powers])
         return res
 
+    def pow_scalar(self, power):
+        def b_fn(dy):
+            self.grad += dy * power * np.power(self.data, power - 1)
+
+        res = Tensor(self.data ** power, is_leaf=False, backward_fn=b_fn)
+        res.prev.extend([self])
+        return res
+
     def relu(self):
         def b_fn(dy=1):
             self.grad[self.data > 0] += dy[self.data > 0]
@@ -214,4 +225,6 @@ class Tensor:
         return self.dot(other)
 
     def __pow__(self, power):
+        if isinstance(power, (int, float)):
+            return self.pow_scalar(power)
         return self.pow(power)

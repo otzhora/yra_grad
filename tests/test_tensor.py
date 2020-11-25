@@ -54,7 +54,6 @@ class TestTensor(unittest.TestCase):
             out = x.dot(W).relu()
             out = out.multiply(m).plus(m)
             out = out.div(x)
-            out = out.pow(x)
             out = out.sum()
             out.backward()
             return out.data, x.grad.data, W.grad.data
@@ -66,7 +65,6 @@ class TestTensor(unittest.TestCase):
             out = x.matmul(W).relu()
             out = out.mul(m).add(m)
             out = out / x
-            out = out ** x
             out = out.sum()
             out.backward()
             return out.detach().numpy(), x.grad, W.grad
