@@ -19,10 +19,8 @@ class Tensor:
 
         if isinstance(data, np.ndarray):
             self.data = data
-        elif isinstance(data, list):
-            self.data = np.ndarray(data)
         else:
-            raise ValueError("data should be list or np.ndarray")
+            self.data = np.array(data)
 
         self.grad = np.zeros(self.data.shape)
 
