@@ -54,6 +54,17 @@ class Tensor:
 
     # ops
 
+    def div(self, other):
+        check(other)
+
+        def b_fn(dy):
+            self.grad += dy / other.data
+            other.grad -= dy * self.data / np.power(other.data, 2)
+
+        res = Tensor(self.data / other.data, is_leaf=False, backward_fn=b_fn)
+        res.prev.extend([self, other])
+        return res
+
     def dot(self, other):
         check(other)
 
@@ -113,6 +124,17 @@ class Tensor:
         res.prev.extend([self, bias])
         return res
 
+    def pow(self, powers):
+        check(powers)
+
+        def b_fn(dy):
+            self.grad += dy * powers.data * np.power(self.data, powers.data - 1)
+            powers.grad += dy * np.power(self.data, powers.data) * np.log(self.data)
+
+        res = Tensor(self.data ** powers.data, is_leaf=False, backward_fn=b_fn)
+        res.prev.extend([self, powers])
+        return res
+
     def relu(self):
         def b_fn(dy=1):
             self.grad[self.data > 0] += dy[self.data > 0]
@@ -152,3 +174,44 @@ class Tensor:
 
     def shape(self):
         return self.data.shape
+
+    @staticmethod
+    def zeros(*shape):
+        return Tensor(np.zeros(shape, dtype=np.float32))
+
+    @staticmethod
+    def ones(*shape):
+        return Tensor(np.ones(shape, dtype=np.float32))
+
+    @staticmethod
+    def randn(*shape):
+        return Tensor(np.random.randn(*shape).astype(np.float32))
+
+    @staticmethod
+    def eye(dim):
+        return Tensor(np.eye(dim).astype(np.float32))
+
+    # data model
+
+    def __add__(self, other):
+        check(other)
+        if len(other.shape()) == 2 and other.shape()[-1] == 1:
+            return self.plus_bias(other)
+        return self.plus(other)
+
+    def __sub__(self, other):
+        check(other)
+        if len(other.shape()) == 2 and other.shape()[-1] == 1:
+            return self.plus_bias(other.scalar_mul(-1))
+        return self.minus(other)
+
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return self.scalar_mul(other)
+        return self.multiply(other)
+
+    def __matmul__(self, other):
+        return self.dot(other)
+
+    def __pow__(self, power):
+        return self.pow(power)
