@@ -95,6 +95,22 @@ class Tensor:
         res.prev.extend([self, other])
         return res
 
+    def exp(self):
+        def b_fn(dy):
+            self.grad += dy * np.exp(self.data)
+
+        res = Tensor(np.exp(self.data), is_leaf=False, backward_fn=b_fn)
+        res.prev.append(self)
+        return res
+
+    def log(self):
+        def b_fn(dy):
+            self.grad += dy / self.data
+
+        res = Tensor(np.log(self.data), is_leaf=False, backward_fn=b_fn)
+        res.prev.append(self)
+        return res
+
     def minus(self, other):
         check(other)
 

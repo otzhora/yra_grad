@@ -46,6 +46,10 @@ class TestTensor(unittest.TestCase):
 
         np.testing.assert_allclose((a_torch ** b_torch).numpy(), a.pow(b).data)
 
+        np.testing.assert_allclose(a_torch.log().numpy(), a.log().data)
+
+        np.testing.assert_allclose(a_torch.exp().numpy(), a.exp().data)
+
     def test_backward(self):
         def test_Tensor():
             x = Tensor(x_init)
@@ -54,6 +58,8 @@ class TestTensor(unittest.TestCase):
             out = x.dot(W).relu()
             out = out.multiply(m).plus(m)
             out = out.div(x)
+            out = out.exp()
+            out = out.log()
             out = out.sum()
             out.backward()
             return out.data, x.grad.data, W.grad.data
@@ -65,6 +71,8 @@ class TestTensor(unittest.TestCase):
             out = x.matmul(W).relu()
             out = out.mul(m).add(m)
             out = out / x
+            out = out.exp()
+            out = out.log()
             out = out.sum()
             out.backward()
             return out.detach().numpy(), x.grad, W.grad
