@@ -24,17 +24,26 @@ class Tensor:
 
     # grad stuff
 
-    def zero_grad(self):
-        self.grad = np.zeros(self.data.shape)
-
-    def calculate_grad(self):
-        self.backward_fn(dy=self.grad)
-
     def backward(self):
         topological_sorted = self._topological_sort()
         self.grad = np.ones(self.data.shape)
         for tensor in reversed(topological_sorted):
             tensor.calculate_grad()
+
+    def calculate_grad(self):
+        self.backward_fn(dy=self.grad)
+
+    def step(self, step_size):
+        if isinstance(step_size, Tensor):
+            self.data -= step_size.data
+            return
+        if isinstance(step_size, np.ndarray):
+            self.data -= step_size
+            return
+        raise ValueError("step_size should be np.ndarray or Tensor")
+
+    def zero_grad(self):
+        self.grad = np.zeros(self.data.shape)
 
     def _topological_sort(self):
         tensors_seen = set()
