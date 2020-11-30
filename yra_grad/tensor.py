@@ -240,6 +240,11 @@ class Tensor:
             return self.plus_bias(other)
         return self.plus(other)
 
+    def __getitem__(self, item):
+        if isinstance(item, Tensor):
+            return Tensor(self.data[item.data])
+        return Tensor(self.data[item])
+
     def __sub__(self, other):
         check(other)
         if len(other.shape()) == 2 and other.shape()[-1] == 1:
